@@ -2,7 +2,7 @@
 $host = "localhost";
 $dbname = "tarefas"; // Nome conforme seu script
 $usuario_db = "root";
-$senha_db = "ceub123456";
+$senha_db = "Senha";
 
 try {
     $conexao = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $usuario_db, $senha_db);
