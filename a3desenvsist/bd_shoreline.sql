@@ -81,6 +81,10 @@ FOREING KEY (cod_quart) REFERENCES quartos(id);
 
 
 -- INSERTS TESTE --
+-- USUARIOS --
+INSERT INTO usuarios (nome, senha) VALUES
+('admin', MD5('admin1234'))
+
 -- UNIDADES --
 INSERT INTO unidades (nome, local) VALUES 
 ('Resort Tropical Sol', 'Porto de Galinhas, PE'),
