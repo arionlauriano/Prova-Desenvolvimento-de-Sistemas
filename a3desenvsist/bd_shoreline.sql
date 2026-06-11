@@ -1,3 +1,4 @@
+DROP SCHEMA bd_shoreline;
 -- CRIAÇÃO E SELEÇÂO DO BANCO DE DADOS --
 CREATE SCHEMA bd_shoreline;
 USE bd_shoreline;
@@ -14,7 +15,7 @@ CREATE TABLE usuarios (
 CREATE TABLE unidades (
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	nome VARCHAR(100) NOT NULL,
-	local VARCHAR(500) NOT NULL
+	loc VARCHAR(500) NOT NULL
 );
 
 -- AREAS --
@@ -29,7 +30,8 @@ CREATE TABLE areas (
 CREATE TABLE alas (
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	nome VARCHAR(50) NOT NULL,
-	cod_unid INT NOT NULL
+	cod_unid INT NOT NULL,
+    vlr_diaria INT NOT NULL
 );
 
 -- QUARTOS --
@@ -40,11 +42,11 @@ CREATE TABLE quartos (
 );
 
 -- RESERVAS --
-CREATE TABLE (
+CREATE TABLE reservas(
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	nome VARCHAR(200) NOT NULL,
 	cpf VARCHAR(11) NOT NULL,
-	qnt_adultos INT NOT NUL,
+	qnt_adultos INT NOT NULL,
 	qnt_crianças INT,
 	data_checkin DATE NOT NULL,
 	data_checkout DATE NOT NULL,
@@ -56,7 +58,7 @@ CREATE TABLE (
 -- CHAVES ESTRANGEIRAS --
 -- AREAS --
 ALTER TABLE areas 
-ADD CONTRAINT fk_area_unid
+ADD CONSTRAINT fk_area_unid
 FOREIGN KEY (cod_unid) REFERENCES unidades(id)
 ON DELETE CASCADE;
 
@@ -77,16 +79,16 @@ ALTER TABLE reservas
 ADD CONSTRAINT fk_res_unid
 FOREIGN KEY (cod_unid) REFERENCES unidades(id),
 ADD CONSTRAINT fk_res_quart
-FOREING KEY (cod_quart) REFERENCES quartos(id);
+FOREIGN KEY (cod_quart) REFERENCES quartos(id);
 
 
 -- INSERTS TESTE --
 -- USUARIOS --
 INSERT INTO usuarios (nome, senha) VALUES
-('admin', MD5('admin1234'))
+('admin', MD5('admin1234'));
 
 -- UNIDADES --
-INSERT INTO unidades (nome, local) VALUES 
+INSERT INTO unidades (nome, loc) VALUES 
 ('Resort Tropical Sol', 'Porto de Galinhas, PE'),
 ('Eco Hotel Vale Verde', 'Bonito, MS');
 
@@ -102,13 +104,13 @@ INSERT INTO areas (nome, descricao, cod_unid) VALUES
 ('Restaurante Ipê Roxo', 'Culinária contemporânea com ingredientes da fazenda', 2);
 
 -- ALAS --
-INSERT INTO alas (nome, cod_unid) VALUES 
+INSERT INTO alas (nome, cod_unid, vlr_diaria) VALUES 
 -- Alas da Unidade 1 --
-('Bromélia', 1),
-('Orquídea', 1),
+('Bromélia', 1, 250.00),
+('Orquídea', 1, 500.00),
 -- Alas da Unidade 2 --
-('Manacá', 2),
-('Jacarandá', 2);
+('Manacá', 2, 250.00),
+('Jacarandá', 2, 500.00);
 
 -- QUARTOS --
 INSERT INTO quartos (num, cod_ala) VALUES 

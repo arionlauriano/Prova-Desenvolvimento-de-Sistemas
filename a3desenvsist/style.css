@@ -1,0 +1,16 @@
+.form-bg {
+    background-color: rgba(250, 235, 215, 0.753);
+    width: 60%;
+    margin: auto;
+    padding: 1cm;
+    border-radius: 10px;
+    
+}
+
+.card-body {
+    background-color: antiquewhite;
+    width: 40%;
+    margin: auto;
+    padding: 1cm;
+    border-radius: 10px;
+}
