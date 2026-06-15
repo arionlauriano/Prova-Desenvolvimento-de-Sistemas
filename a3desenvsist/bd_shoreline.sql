@@ -41,6 +41,20 @@ CREATE TABLE quartos (
 	cod_ala INT NOT NULL
 );
 
+-- SERVIÇOS --
+CREATE TABLE servicos (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	nome VARCHAR(50) NOT NULL,
+	descricao VARCHAR(500) NOT NULL
+);
+
+-- SOLICITAÇÂO DE SERVIÇOS --
+CREATE TABLE soli_serv (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	cod_quart INT NOT NULL,
+	cod_reserv INT NOT NULL
+);
+
 -- RESERVAS --
 CREATE TABLE reservas(
 	id INT AUTO_INCREMENT PRIMARY KEY,
@@ -50,6 +64,7 @@ CREATE TABLE reservas(
 	qnt_crianças INT,
 	data_checkin DATE NOT NULL,
 	data_checkout DATE NOT NULL,
+	vlr_reserv INT NOT NULL,
 	cod_unid INT NOT NULL,
 	cod_quart INT NOT NULL
 );
@@ -81,6 +96,12 @@ FOREIGN KEY (cod_unid) REFERENCES unidades(id),
 ADD CONSTRAINT fk_res_quart
 FOREIGN KEY (cod_quart) REFERENCES quartos(id);
 
+-- SOLICITAÇÃO DE SERVIÇOS --
+ALTER TABLE soli_serv
+ADD CONSTRAINT fk_soli_quart
+FOREIGN KEY (cod_quart) REFERENCES quartos(id),
+ADD CONSTRAINT fk_soli_reserv
+FOREIGN KEY (cod_reserv) REFERENCES quartos(id);
 
 -- INSERTS TESTE --
 -- USUARIOS --
