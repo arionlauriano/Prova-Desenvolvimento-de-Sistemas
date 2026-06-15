@@ -1,15 +1,18 @@
 <?php
 include 'conexao.php';
-if(isset($_SESSION["logado"]) && $_SESSION["logado"] === true) {
+
+if (isset($_SESSION["logado"]) && $_SESSION["logado"] === true) {
     header("Location: index.php");
-    exit;
+    exit();
 }
+
 $erro = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $usuario = $_POST['usuario'];
+    $usuario = trim($_POST['usuario']);
     $senha = md5($_POST['senha']);
     
-    $sql = "SELECT * FROM usuario WHERE usuario = :usuario AND senha = :senha";
+    $sql = "SELECT * FROM usuarios WHERE nome = :usuario AND senha = :senha";
     $stmt = $conexao->prepare($sql);
     $stmt->bindParam(':usuario', $usuario);
     $stmt->bindParam(':senha', $senha);
@@ -20,10 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $_SESSION['logado'] = true;
         $_SESSION['usuario_id'] = $dados['id'];
-        $_SESSION['usuario'] = $dados['usuarios'];
+        $_SESSION['usuario'] = $dados['nome']; 
 
         header("Location: index.php");
-        exit;
+        exit();
     } else {
         $erro = "Usuário ou senha inválidos!";
     }
@@ -47,7 +50,7 @@ include 'header.php';
                 <form method="POST">
                     <div class="mb-3">
                         <label class="form-label">Usuário:</label>
-                        <input type="text" name="usuario" class="form-control" required>
+                        <input type="text" name="usuario" class="form-control" required value="<?php echo isset($_POST['usuario']) ? htmlspecialchars($_POST['usuario']) : ''; ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Senha:</label>
@@ -55,6 +58,7 @@ include 'header.php';
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Entrar</button>
                 </form>
+                
                 <br>
                 <p>Não possui cadastro? <a href="cadastro.php">Cadastre-se.</a></p>
             </div>

@@ -1,4 +1,8 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // config.php está sendo ignorado pelo git para esconder a senha do BD
 $config = @include('config.php');
 

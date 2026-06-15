@@ -14,8 +14,8 @@ $isAdmin = ($_SESSION['usuario_id'] == 1);
 <div class="container mt-5">
     <div class="text-center mb-5">
         <h1 class="display-5 fw-normal text-dark">Resort Shoreline</h1>
-        <p class="w-25 mx-auto">Painel de Controle Principal</p>
-        <hr class="w-25 mx-auto">
+        <p class="text-muted fs-5">Painel de Controle Principal</p>
+        <hr class="w-25 mx-auto" style="border-top: 2px solid #0d6efd; opacity: 0.8;">
     </div>
 
     <div class="row justify-content-center g-4">
@@ -26,62 +26,66 @@ $isAdmin = ($_SESSION['usuario_id'] == 1);
                     <div class="card-body p-4 d-flex flex-column">
                         <h3 class="text-center text-primary mb-4 fs-4 fw-medium">Infraestrutura</h3>
                         <div class="list-group list-group-flush my-auto">
-                            <a href="gerencia_unid.php" class="list-group-item list-group-item-action border-0 py-3 rouded mb-2 bg-lignt text-secondary">
+                            <a href="gerencia_unid.php" class="list-group-item list-group-item-action border-0 py-3 rounded mb-2 bg-light text-secondary">
                                 🏢 Gerenciar Unidades
                             </a>
-                            <a href="gerencia_areas.php" class="list-group-item list-group-item-action border-0 py-3 rouded mb-2 bg-lignt text-secondary">
+                            <a href="gerencia_areas.php" class="list-group-item list-group-item-action border-0 py-3 rounded mb-2 bg-light text-secondary">
                                 🏊 Áreas Comuns
                             </a>
-                            <a href="gerencia_alas.php" class="list-group-item list-group-item-action border-0 py-3 rouded mb-2 bg-lignt text-secondary">
+                            <a href="gerencia_alas.php" class="list-group-item list-group-item-action border-0 py-3 rounded mb-2 bg-light text-secondary">
                                 🌿 Gerenciar Alas
                             </a>
-                            <a href="gerencia_quartos.php" class="list-group-item list-group-item-action border-0 py-3 rouded mb-2 bg-lignt text-secondary">
+                            <a href="gerencia_quartos.php" class="list-group-item list-group-item-action border-0 py-3 rounded mb-2 bg-light text-secondary">
                                 🛏️ Gerenciar Quartos
-                        </div>
+                            </a> </div>
                     </div>
                 </div>
             </div>
+        <?php endif; ?>
 
-            <div class="col-md-4">
-                <div class="card shadow border-0 h-100">
-                    <div class="card-body p-4 d-flex flex-column">
-                        <h3 class="text-center text-primary mb-4 fs-4 fw-medium">Reservas</h3>
-                        <div class="list-group list-group-flush my-auto">
-                            <a href="unid.php" class="list-group-item list-group-item-action border-0 py-3 rouded mb-2 bg-lignt text-secondary">
-                                🏢 Gerenciar Unidades
+        <div class="col-md-4">
+            <div class="card shadow border-0 h-100">
+                <div class="card-body p-4 d-flex flex-column">
+                    <h3 class="text-center text-primary mb-4 fs-4 fw-medium">Serviços</h3>
+                    <div class="list-group list-group-flush my-auto">
+                        <?php if ($isAdmin): ?>
+                            <a href="gerencia_servicos.php" class="list-group-item list-group-item-action border-0 py-3 rounded mb-2 bg-light text-secondary">
+                                🛎️ Gerenciar Serviços
                             </a>
-                            <a href="areas.php" class="list-group-item list-group-item-action border-0 py-3 rouded mb-2 bg-lignt text-secondary">
-                                🏊 Áreas Comuns
+                            <a href="gerencia_soliserv.php" class="list-group-item list-group-item-action border-0 py-3 rounded mb-2 bg-light text-secondary">
+                                📋 Solicitações dos Serviços
+                            </a>  
+                        <?php else: ?>                           
+                            <a href="meus_servicos.php" class="list-group-item list-group-item-action border-0 py-3 rounded mb-2 bg-light text-secondary">
+                                🛎️ Meus Serviços
                             </a>
-                            <a href="alas.php" class="list-group-item list-group-item-action border-0 py-3 rouded mb-2 bg-lignt text-secondary">
-                                🌿 Gerenciar Alas
-                            </a>
-                            <a href="quartos.php" class="list-group-item list-group-item-action border-0 py-3 rouded mb-2 bg-lignt text-secondary">
-                                🛏️ Gerenciar Quartos
-                        </div>
+                        <?php endif; ?>         
                     </div>
                 </div>
             </div>
+        </div>
 
-                        <div class="col-md-4">
-                <div class="card shadow border-0 h-100">
-                    <div class="card-body p-4 d-flex flex-column">
-                        <h3 class="text-center text-primary mb-4 fs-4 fw-medium">Infraestrutura</h3>
-                        <div class="list-group list-group-flush my-auto">
-                            <a href=".php" class="list-group-item list-group-item-action border-0 py-3 rouded mb-2 bg-lignt text-secondary">
-                                
+        <div class="col-md-4">
+            <div class="card shadow border-0 h-100">
+                <div class="card-body p-4 d-flex flex-column">
+                    <h3 class="text-center text-primary mb-4 fs-4 fw-medium">Reservas</h3>
+                    <div class="list-group list-group-flush my-auto">
+                        <?php if($isAdmin): ?>
+                            <a href="gerencia_reservas.php" class="list-group-item list-group-item-action border-0 py-3 rounded mb-2 bg-light text-secondary">
+                                📅 Gerenciar Reservas
                             </a>
-                            <a href=".php" class="list-group-item list-group-item-action border-0 py-3 rouded mb-2 bg-lignt text-secondary">
-                                
+                        <?php else: ?>
+                            <a href="minhas_reservas.php" class="list-group-item list-group-item-action border-0 py-3 rounded mb-2 bg-light text-secondary">
+                                📅 Meus Agendamentos
                             </a>
-                            <a href=".php" class="list-group-item list-group-item-action border-0 py-3 rouded mb-2 bg-lignt text-secondary">
-                                
+                            <a href="nova_reservacli.php" class="list-group-item list-group-item-action border-0 py-3 rounded mb-2 bg-light text-secondary">
+                                ➕ Nova Reserva
                             </a>
-                            <a href=".php" class="list-group-item list-group-item-action border-0 py-3 rouded mb-2 bg-lignt text-secondary">
-                                
-                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
+        </div>
+
     </div>
 </div>
