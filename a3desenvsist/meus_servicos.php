@@ -11,6 +11,38 @@ if (!isset($_SESSION["logado"]) || $_SESSION["logado"] !== true) {
 }
 
 $id_usuario_logado = (int)$_SESSION['usuario_id'];
+$mensagem_sucesso = "";
+$mensagem_erro = "";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['btn_cadastrar_servico'])) {
+    $cod_reserv = (int)$_POST['cod_reserv'];
+    $cod_serv = (int)$_POST['cod_serv'];
+
+    $sql_valida = "SELECT cod_quart FROM reservas WHERE id = :cod_reserv AND cod_usuario = :cod_usuario";
+    $stmt_valida = $conexao->prepare($sql_valida);
+    $stmt_valida->bindParam(':cod_reserv', $cod_reserv, PDO::PARAM_INT);
+    $stmt_valida->bindParam(':cod_usuario', $id_usuario_logado, PDO::PARAM_INT);
+    $stmt_valida->execute();
+    $reserva_valida = $stmt_valida->fetch(PDO::FETCH_ASSOC);
+
+    if ($reserva_valida) {
+        $cod_quart = $reserva_valida['cod_quart'];
+        
+        $sql_insere = "INSERT INTO soli_serv (cod_quart, cod_reserv, cod_serv, status) VALUES (:cod_quart, :cod_reserv, :cod_serv, 'Pendente')";
+        $stmt_insere = $conexao->prepare($sql_insere);
+        $stmt_insere->bindParam(':cod_quart', $cod_quart, PDO::PARAM_INT);
+        $stmt_insere->bindParam(':cod_reserv', $cod_reserv, PDO::PARAM_INT);
+        $stmt_insere->bindParam(':cod_serv', $cod_serv, PDO::PARAM_INT);
+        
+        if ($stmt_insere->execute()) {
+            $mensagem_sucesso = "Solicitação de serviço registrada com sucesso!";
+        } else {
+            $mensagem_erro = "Erro ao registrar o serviço. Tente novamente.";
+        }
+    } else {
+        $mensagem_erro = "Reserva inválida ou não pertence ao seu usuário.";
+    }
+}
 
 $sql_solicitacoes = "SELECT s.id, s.status, r.nome AS nome_hospede, r.id AS ref_reserva, q.num AS num_quarto, ser.nome AS nome_servico, ser.vlr_serv
                      FROM soli_serv s
@@ -25,6 +57,16 @@ $stmt->bindParam(':cod_usuario', $id_usuario_logado, PDO::PARAM_INT);
 $stmt->execute();
 $solicitacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$sql_minhas_reservas = "SELECT id, nome FROM reservas WHERE cod_usuario = :cod_usuario ORDER BY id DESC";
+$stmt_res = $conexao->prepare($sql_minhas_reservas);
+$stmt_res->bindParam(':cod_usuario', $id_usuario_logado, PDO::PARAM_INT);
+$stmt_res->execute();
+$minhas_reservas = $stmt_res->fetchAll(PDO::FETCH_ASSOC);
+
+$sql_todos_servicos = "SELECT id, nome, vlr_serv FROM servicos ORDER BY nome ASC";
+$stmt_ser = $conexao->query($sql_todos_servicos);
+$todos_servicos = $stmt_ser->fetchAll(PDO::FETCH_ASSOC);
+
 include 'header.php';
 ?>
 
@@ -34,14 +76,24 @@ include 'header.php';
             <h1 class="h2 text-dark">Meus Serviços Solicitados</h1>
             <p class="text-muted mb-0">Pedidos de serviços em reservas de: <strong><?php echo htmlspecialchars(isset($_SESSION["usuario_nome"]) ? $_SESSION["usuario_nome"] : (isset($_SESSION["usuario"]) ? $_SESSION["usuario"] : 'Funcionário')); ?></strong></p>
         </div>
-        <a href="nova_solicitacao.php" class="btn btn-primary">Nova Solicitação</a>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNovaSolicitacao">
+            Nova Solicitação
+        </button>
     </div>
 
     <hr>
 
-    <?php if (isset($_GET['sucesso_solicitacao'])): ?>
+    <?php if (!empty($mensagem_sucesso)): ?>
         <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-            Solicitação de serviço registrada com sucesso!
+            <?php echo $mensagem_sucesso; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($mensagem_erro)): ?>
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <?php echo $mensagem_erro; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
 
@@ -101,3 +153,48 @@ include 'header.php';
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalNovaSolicitacao" tabindex="-1" aria-labelledby="modalNovaSolicitacaoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="modalNovaSolicitacaoLabel">Nova Solicitação de Serviço</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="cod_reserv" class="form-label">Selecione a Reserva / Hóspede:</label>
+                        <select class="form-select" name="cod_reserv" id="cod_reserv" required>
+                            <option value="" disabled selected>Escolha uma das suas reservas...</option>
+                            <?php foreach ($minhas_reservas as $reserva): ?>
+                                <option value="<?php echo $reserva['id']; ?>">
+                                    Reserva #<?php echo $reserva['id']; ?> - <?php echo htmlspecialchars($reserva['nome']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cod_serv" class="form-label">Selecione o Serviço:</label>
+                        <select class="form-select" name="cod_serv" id="cod_serv" required>
+                            <option value="" disabled selected>Escolha o serviço desejado...</option>
+                            <?php foreach ($todos_servicos as $servico): ?>
+                                <option value="<?php echo $servico['id']; ?>">
+                                    <?php echo htmlspecialchars($servico['nome']); ?> (R$ <?php echo number_format($servico['vlr_serv'], 2, ',', '.'); ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" name="btn_cadastrar_servico" class="btn btn-primary">Adicionar Serviço</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
